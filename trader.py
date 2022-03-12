@@ -2,7 +2,34 @@
 from deap import PrimitiveSetTyped
 import operator
 import random
-class Trader():
+
+class SimpleTrader():
+    nb_traders = 0
+    def __init__(self, budget):
+        SimpleTrader.nb_traders += 1
+        self.name = "simpletrader" + str(SimpleTrader.nb_traders)
+        self.budget = budget
+        ## randomize and generate symbolic genotype
+        # go along or against trend?
+        self.trendist = random.choice([1, -1])
+
+        # purchase triggering variation
+        self.buy_var = random.random()
+
+        # lower tolerance (relative) before selling
+        self.stoploss = random.random()
+        # target price (relative)
+        self.target = random.random()
+    
+        self.horizon = int(random.random()*100) + 1
+
+    def act(self, sell_price, sell_vol, buy_price, buy_vol, history):
+        if self.budget >= sell_price :
+            if buy_price * self.trendist > history[-self.horizon] * self.trendist * (1 + self.buy_var):
+                return "buy", sell_price + random.random()*0.2, 1
+
+
+class SymbolicTrader():
     nb_traders = 0
     horizon = 1
     def if_then_else(input, output1, output2):
@@ -49,8 +76,8 @@ class Trader():
     # pset_buy.renameArguments(ARG1="sell_vol") # TODO problem... we can't rename args without knowing how many we have
 
     def __init__(self, budget):
-        Trader.nb_traders += 1
-        self.name = "trader" + str(Trader.nb_traders)
+        SymbolicTrader.nb_traders += 1
+        self.name = "symtrader" + str(SymbolicTrader.nb_traders)
         self.budget = budget
         ## randomize and generate symbolic genotype
         # gen_buy will decide wether to buy or sell or do nothing

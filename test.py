@@ -20,6 +20,13 @@ def main():
             # each trader chooses and submits an action (buy or sell)
             # the order should specify the type, the volume and the value
             order = agent.act(*broker.info())
+            # register order
+        # give feedback to traders (successful transaction or not)
+        # traders can put a number of orders following this
+        for name in agents.keys():
+            agent = agents[name]
+            order = agent.check_orders(broker.orders)
+
         # at the end of iteration, remove people with negative budget (rerandomize)
         # for name in agents.keys():
             # if agents[name].budget <= 0:
